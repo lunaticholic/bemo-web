@@ -10,6 +10,7 @@ import Button from "../components/auth/Button";
 import BottomBox from "../components/auth/BottomBox";
 import Separator from "../components/auth/Separator";
 import { ImageBox } from "../components/auth/ImageBox";
+import { useState } from "react";
 
 const FacebookLogin = styled.div`
     color: #385285;
@@ -20,6 +21,24 @@ const FacebookLogin = styled.div`
 `;
 
 function Login() {
+    const [ username, setUsername ] = useState("");
+    const [ usernameError, setUsernameError ] = useState("");
+    const onUsernameChange = (event) => {
+        // 실제로 console.log(event.target.value)를 한 다음 username에 타이핑을 하면 실시간으로 전송이된다.
+        setUsernameError("");
+        setUsername(event.target.value);
+    }
+    const handleSubmit = (event) => {
+        // 바로 아래의 구문은 이벤트를 취소할 수 있는 경우, 이벤트의 전파를 막지 않고 그 이벤트를 취소하는 기능을 가진다.
+        // 즉 여기서는 submit 버튼을 누르면 페이지가 새로고침을 하는데 이걸 취소한다는 것이다.
+        event.preventDefault();
+        if (username === "") {
+            setUsernameError("username은 반드시 입력하셔야 합니다.")
+        }
+        if (username.length < 8) {
+            setUsernameError("username은 8글자 이상입니다.")
+        }
+    }
     return (
         <AuthLayout>
                 <FormBox>
@@ -28,10 +47,11 @@ function Login() {
                             <img src={login_logo} width="60%" height="60%" alt="login_logo" />
                         </div>
                     </ImageBox>
-                    <form>
-                        <Input type="text" placeholder="USERNAME" />
+                    <form onSubmit={handleSubmit}>
+                        {usernameError}
+                        <Input type="text" value={username} onChange={onUsernameChange} placeholder="USERNAME" />
                         <Input type="password" placeholder="PASSWORD" />
-                        <Button type="submit" value="LOG IN" />
+                        <Button type="submit" value="LOG IN" disabled={username === "" && username.length < 8} />
                     </form>
                 <Separator />
                 <FacebookLogin>
