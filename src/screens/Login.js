@@ -1,6 +1,5 @@
 import routes from "../routes";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import AuthLayout from "../components/auth/AuthLayout";
 import login_logo from "../images/logos/login_logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,13 +9,7 @@ import FormBox from "../components/auth/FormBox";
 import Button from "../components/auth/Button";
 import BottomBox from "../components/auth/BottomBox";
 import Separator from "../components/auth/Separator";
-
-
-const ImageBox = styled.div`
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-`;
+import { ImageBox } from "../components/auth/ImageBox";
 
 const FacebookLogin = styled.div`
     color: #385285;
