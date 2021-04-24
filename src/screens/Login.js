@@ -8,10 +8,10 @@ import BottomBox from "../components/auth/BottomBox";
 import Separator from "../components/auth/Separator";
 import AuthLayout from "../components/auth/AuthLayout";
 import login_logo from "../images/logos/login_logo.png";
-import { useState } from "react";
 import { ImageBox } from "../components/auth/ImageBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookSquare } from "@fortawesome/free-brands-svg-icons";
+import { useForm } from "react-hook-form";
 
 const FacebookLogin = styled.div`
     color: #385285;
@@ -22,24 +22,14 @@ const FacebookLogin = styled.div`
 `;
 
 function Login() {
-    const [ username, setUsername ] = useState("");
-    const [ usernameError, setUsernameError ] = useState("");
-    const onUsernameChange = (event) => {
-        // 실제로 console.log(event.target.value)를 한 다음 username에 타이핑을 하면 실시간으로 전송이된다.
-        setUsernameError("");
-        setUsername(event.target.value);
-    }
-    const handleSubmit = (event) => {
-        // 바로 아래의 구문은 이벤트를 취소할 수 있는 경우, 이벤트의 전파를 막지 않고 그 이벤트를 취소하는 기능을 가진다.
-        // 즉 여기서는 submit 버튼을 누르면 페이지가 새로고침을 하는데 이걸 취소한다는 것이다.
-        event.preventDefault();
-        if (username === "") {
-            setUsernameError("username은 반드시 입력하셔야 합니다.")
-        }
-        if (username.length < 8) {
-            setUsernameError("username은 8글자 이상입니다.")
-        }
-    }
+    // input을 위해 state를 만들어줘야 하고, onChange도 만들고, value도 설정해야 하는데
+    // register를 사용하면 모든 게 해결됨
+    // watch를 사용하게 되면 현재 form에 기록되는 모든 글자를 바라볼 수 있음
+    const { register, handleSubmit } = useForm();
+
+    // onSubmitValid는 form에 있는 input을 검사해줌
+    const onSubmitValid = (data) => { console.log(data) }
+    const onSubmitInValid = (data) => { console.log(data, "invalid") }
     return (
         <AuthLayout>
             {/* 화면 상단 탭에 보이는 디자인 */}
@@ -50,10 +40,12 @@ function Login() {
                         <img src={login_logo} width="60%" height="60%" alt="login_logo" />
                     </div>
                 </ImageBox>
-                <form>
-                    {usernameError}
-                    <Input type="text"placeholder="USERNAME" />
-                    <Input type="password" placeholder="PASSWORD" />
+                {/* handleSumbit이 form을 검증할거임, 유효하면 onSubmitValid, 유효하지 않으면 onSubmitInValid */}
+                <form onSubmit={handleSubmit(onSubmitValid, onSubmitInValid)}>
+                    {/* register안에 required는 필수항목, minLength는 최소로 입력되어야 할 문자의 수 */}
+                    {/* ref안에는 validate를 사용하여 필수로 추가되어야 하는 것도 검사 가능하고, pattern을 통해 입력 형식을 검사할 수 있다. 개쩌네 */}
+                    <Input ref={register({ required: "username은 필수항목입니다.", minLength: 5 })} name="username" type="text"placeholder="USERNAME" />
+                    <Input ref={register({ required: "password는 필수항목입니다.", minLength: 8 })} name="password" type="password" placeholder="PASSWORD" />
                     <Button type="submit" value="LOG IN" />
                 </form>
             <Separator />
