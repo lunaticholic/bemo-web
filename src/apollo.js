@@ -1,4 +1,5 @@
-import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
+import { ApolloClient, createHttpLink, InMemoryCache, makeVar } from "@apollo/client";
+import { setContext } from '@apollo/client/link/context';
 
 const TOKEN = "TOKEN";
 const DARK_MODE = "DARK_MODE"
@@ -15,7 +16,7 @@ export const logUserOut = (history) => {
     localStorage.removeItem(TOKEN)
 
     // 아래 2개의 구문은 회원가입시 진행했던 email을 home화면으로 넘겨주는 구문을 모두 없애준다. 심지어 메세지도
-    history.replace();
+    //history.replace();
     window.location.reload();
     //isLoggedInVar(false);
 }
@@ -32,13 +33,28 @@ export const disableDarkMode = () => {
     darkModeVar(false);
 }
 
-export const client = new ApolloClient({
+// 이전에 가지고 있던 graphQL API의 uri를 가지고 있다.
+const httpLink = createHttpLink({
     uri:"http://localhost:4000/graphql",
+})
+// authLink는 setContext라고 하는 함수를 불러주는데, 이 놈은 argument로 함수를 받아와
+// 하지만 우리는 이전에 있던 header의 값을 계속 가져가고 싶어서 request의 헤더인 headers라는 객체를 리턴시키는것임
+const authLink = setContext((_, { headers }) => {
+    return {
+        headers: {
+            ...headers,
+            token: localStorage.getItem(TOKEN)
+        }
+    }
+})
+// authLink랑 httpLink랑 두 개의 링크를 연결해줌
+export const client = new ApolloClient({
+    link: authLink.concat(httpLink),
     cache: new InMemoryCache(),
 });
 
 /*
     uri: client가 로그인하기 위해 정보를 제공받을 수 있는 서버의 주소
     cache: Apollo가 한번 가져온 정보를 기억하게 해서 매번 같은 정보를 가져오지 않도록 하는 녀석
-            Apollo는 local환경에 정보를 저장해 놓는데, 이는 우리가 홈페이지를 수정할 떄마다 매번 정보를 불러오는 걸 막아주는 쩌는 녀석
+           Apollo는 local환경에 정보를 저장해 놓는데, 이는 우리가 홈페이지를 수정할 떄마다 매번 정보를 불러오는 걸 막아주는 쩌는 녀석
 */

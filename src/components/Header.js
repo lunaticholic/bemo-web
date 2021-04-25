@@ -6,6 +6,9 @@ import { useReactiveVar } from "@apollo/client";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCompass, faUser } from "@fortawesome/free-regular-svg-icons";
+import { Link } from "react-router-dom";
+import routes from "../routes";
+import useUser from "../hooks/useUser";
 
 const SHeader = styled.header`
     width: 100%;
@@ -31,8 +34,17 @@ const Icon = styled.span`
     margin-left: 15px;
 `;
 
+const Button = styled.span`
+    background-color: ${(props) => props.theme.accent};
+    border-radius: 4px;
+    padding: 4px 15px;
+    color: white;
+    font-weight: 600;
+`;
+
 function Header() {
     const isLoggedIn = useReactiveVar(isLoggedInVar);
+    const loggedInUser = useUser();
     return (
         <SHeader>
             <Wrapper>
@@ -42,14 +54,18 @@ function Header() {
                     </div>
                 </ImageBox>
                 <Column>
-                {/* 마찬가지로 로그인이 되어 있다면 이 화면이 보일 것이고 아니면 안보일 것이다. */}
+                {/* 마찬가지로 로그인이 되어 있다면 이 화면이 보일 것이고 아래의 아이콘 대신에 로그인버튼이 보일 것이다. */}
                 {isLoggedIn ? (
                     <>
                     <Icon> <FontAwesomeIcon icon={faHome} size="lg" /> </Icon>
                     <Icon> <FontAwesomeIcon icon={faCompass} size="lg" /> </Icon>
                     <Icon> <FontAwesomeIcon icon={faUser} size="lg" /> </Icon>
                     </>
-                ) : null}
+                ) : (
+                    <Link href={routes.home}>
+                        <Button>Log In</Button>
+                    </Link>
+                )}
                 </Column>
             </Wrapper>
         </SHeader>
