@@ -4,6 +4,8 @@ import { gql, useQuery } from "@apollo/client";
 import styled from "styled-components";
 import Avatar from "../components/Avatar";
 import { FatText } from "../components/shared";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBookmark, faComment, faHeart, faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 
 //작성되어 있는 글들을 보여주려고 데이터를 가져오는 쿼리문
 const FEED_QUERY = gql`
@@ -28,32 +30,70 @@ const PhotoContainer = styled.div`
     background-color: white;
     border: 1px solid ${(props) => props.theme.borderColor};
     margin-bottom: 20px;
+    max-width: 620px;
 `;
 const PhotoHeader = styled.div`
     display:flex;
     align-items: center;
-    padding: 5px 10px;
+    padding: 15px 20px;
 `;
 
 const Username = styled(FatText)`
-    margin-left: 10px;
+    margin-left: 15px;
+`;
+
+const PhotoFile = styled.img`
+    min-width: 100%;
+`;
+const PhotoData = styled.div`
+    padding: 15px;
+`;
+const PhotoActions = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    div {
+        display: flex;
+        align-items: center;
+    }
+`;
+const PhotoAction = styled.div`
+    margin-right: 10px;
+`;
+
+const Likes = styled(FatText)`
+    margin-top: 10px;
+    display: block;
 `;
 
 // 홈화면에 아이디 값이 나타날 때 history로 apollo.js와 연결하면 없애줄수 있다.
 function Home() {
     const { data } = useQuery(FEED_QUERY);
-    console.log(data)
     const history = useHistory();
     return (
         <div>
             {data?.seeFeed?.map((photo) => (
                 <PhotoContainer key={photo.id}>
                     <PhotoHeader>
-                        <Avatar url={photo.user.avatar} />
+                        <Avatar lg url={photo.user.avatar} />
                         <Username>{photo.user.username}</Username>
                     </PhotoHeader>
-                </PhotoContainer>)
-            )}
+                    <PhotoFile src={photo.file} />
+                    <PhotoData>
+                        <PhotoActions>
+                            <div>
+                            <PhotoAction><FontAwesomeIcon size={"lg"} icon={faHeart} /></PhotoAction>
+                            <PhotoAction><FontAwesomeIcon size={"lg"} icon={faComment} /></PhotoAction>
+                            <PhotoAction><FontAwesomeIcon size={"lg"} icon={faPaperPlane} /></PhotoAction>
+                            </div>
+                            <div>
+                                <FontAwesomeIcon size={"lg"} icon={faBookmark} />
+                            </div>
+                        </PhotoActions>
+                        <Likes>{photo.likes === 1 ? "1 Like" : `${photo.likes} Likes`}</Likes>
+                    </PhotoData>
+                </PhotoContainer>
+            ))}
             {/* <button onClick={() => logUserOut(history)}>Log Out Now!</button> */}
         </div>
     );

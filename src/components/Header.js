@@ -63,8 +63,8 @@ function Header() {
                 {/* 마찬가지로 로그인이 되어 있다면 이 화면이 보일 것이고 아래의 아이콘 대신에 로그인버튼이 보일 것이다. */}
                 {isLoggedIn ? (
                     <IconsContainer>
-                    <Icon> <FontAwesomeIcon icon={faHome} size="2x" /> </Icon>
-                    <Icon> <FontAwesomeIcon icon={faCompass} size="2x" /> </Icon>
+                    <Icon> <FontAwesomeIcon icon={faHome} size="lg" /> </Icon>
+                    <Icon> <FontAwesomeIcon icon={faCompass} size="lg" /> </Icon>
                     <Icon><Avatar url={data?.me?.avatar} /></Icon>
                     </IconsContainer>
                 ) : (
