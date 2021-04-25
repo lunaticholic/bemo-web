@@ -36,7 +36,9 @@ function Login() {
     // onChange는 어떠한 항목이 변경될 때마다 입력된 값이 유효한지 확인한다는 의미
 
     // onSubmitValid는 form에 있는 input을 검사해줌
-    const onSubmitValid = (data) => { console.log(data) }
+    const onSubmitValid = (data) => {
+        // console.log(data)
+    }
     
     return (
         <AuthLayout>
@@ -52,10 +54,10 @@ function Login() {
                 <form onSubmit={handleSubmit( onSubmitValid )}>
                     {/* register안에 required는 필수항목, minLength는 최소로 입력되어야 할 문자의 수 */}
                     {/* ref안에는 validate를 사용하여 필수로 추가되어야 하는 것도 검사 가능하고, pattern을 통해 입력 형식을 검사할 수 있다. 개쩌네 */}
-                    <Input ref={register({ required: "username은 필수항목입니다.", minLength: { value: 5, message: "username은 최소 5글자 이상입니다."} })} name="username" type="text"placeholder="USERNAME" hasError={Boolean(errors?.username?.message)} />
-                    {/* username 채워져 있지 않은 경우 아래 항목을 통해 username required가 메세지로 보일 것이다. */}
-                    <FormError message={errors?.username?.message} />
-                    <Input ref={register({ required: "password는 필수항목입니다.", minLength: 8 })} name="password" type="password" placeholder="PASSWORD" hasError={Boolean(errors?.password?.message)} />
+                    <Input ref={register({ required: "email은 필수항목입니다.", minLength: 5 })} name="email" type="text"placeholder="EMAIL" hasError={Boolean(errors?.email?.message)} />
+                    {/* email 채워져 있지 않은 경우 아래 항목을 통해 email required가 메세지로 보일 것이다. */}
+                    <FormError message={errors?.email?.message} />
+                    <Input ref={register({ required: "password는 필수항목입니다.", minLength: { value: 5, message: "password는 최소 5글자 이상입니다."} })} name="password" type="password" placeholder="PASSWORD" hasError={Boolean(errors?.password?.message)} />
                     {/* password항목이 채워져 있지 않은 경우 아래 항목을 통해 password required가 메세지로 보일 것이다. */}
                     <FormError message={errors?.password?.message} />
                     {/* disabled를 통해 이 form이 다 채워지기 전에는 활성화가 안되도록 설정한다. */}
