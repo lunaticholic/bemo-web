@@ -47,10 +47,11 @@ function SignUp() {
     const history = useHistory();
     // onCompleted는 우리에게 data를 보내주는데, 이 data는 바로 useMutation에서 오는 data이다.
     const onCompleted = (data) => {
+        const { email } = getValues();
         const { createAccount: {ok, error } } = data;
         if (!ok) { return; }
         // history API에 접근해서 홈화면으로 돌려주는 작업
-        history.push(routes.home);
+        history.push(routes.home, {message: "계정이 생성되었습니다. 로그인해주세요.", email});
     }
     // LOGIN_MUTATION에 있는 error가 폼에 나오도록 하기 위한 hooks 사전작업
     // loading은 mutation이 잘 전송되었는지 확인하고, data는 mutation 종료 이후에 data가 있는지 확인하고, called는 mutation이 호출된건지 여부를 확인할 수 있다.
@@ -58,7 +59,7 @@ function SignUp() {
     const [ createAccount, { loading } ] = useMutation(CREATE_ACCOUNT_MUTATION, {
         onCompleted
     });
-    const { register, formState, handleSubmit, errors } = useForm({ mode: "onChange" });
+    const { register, formState, handleSubmit, errors, getValues } = useForm({ mode: "onChange" });
     
     // onSubmitValid는 form에 있는 input을 검사해줌
     const onSubmitValid = (data) => {

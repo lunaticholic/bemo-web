@@ -15,6 +15,7 @@ import { faFacebookSquare } from "@fortawesome/free-brands-svg-icons";
 import { useForm } from "react-hook-form";
 import FormError from "../components/auth/FormError";
 import { logUserIn } from "../apollo";
+import { useLocation } from "react-router";
 
 const FacebookLogin = styled.div`
     color: #385285;
@@ -22,6 +23,10 @@ const FacebookLogin = styled.div`
         margin-left: 10px;
         font-weight: 600;
     }
+`;
+
+const Notification = styled.div`
+    color: #2C7712;
 `;
 
 const LOGIN_MUTATION = gql`
@@ -35,6 +40,8 @@ const LOGIN_MUTATION = gql`
 `;
 
 function Login() {
+    const location = useLocation();
+
     // input을 위해 state를 만들어줘야 하고, onChange도 만들고, value도 설정해야 하는데
     // register를 사용하면 모든 게 해결됨
     // watch를 사용하게 되면 현재 form에 기록되는 모든 글자를 바라볼 수 있음
@@ -43,8 +50,9 @@ function Login() {
     // formState는 폼에서 일어날 수 있는 것들에 대해 반응한다
     // onBlur는 어떠한 항목을 벗어났을때만 입력된 값이 유효한지 확인한다는 의미
     // onChange는 어떠한 항목이 변경될 때마다 입력된 값이 유효한지 확인한다는 의미
+    // defaultValues 항목을 작성한 이유는 SignUp페이지에서 회원가입을 진행하면 가입시 입력한 email만 자동으로 입력할 수 있게 구현한 것이다.
     const { register, handleSubmit, errors, formState, getValues, setError, clearErrors } = useForm({
-        mode: "onChange"
+        mode: "onChange", defaultValues: {email: location?.state?.email || ""}
     })
     
     // onCompleted에 data를 집어넣게 되면 밑에 정의한 폼이 작업을 끝나면 data안에 정보를 반환해준다.
@@ -97,6 +105,10 @@ function Login() {
                         <img src={login_logo} width="60%" height="60%" alt="login_logo" />
                     </div>
                 </ImageBox>
+
+                {/* location API에 접근하여 어떤 작업이 성공하면 message를 띄우게 해줌 */}
+                <Notification>{location?.state?.message}</Notification>
+
                 {/* handleSumbit이 form을 검증할거임, 유효하면 onSubmitValid, 유효하지 않으면 onSubmitInValid */}
                 <form onSubmit={handleSubmit( onSubmitValid )}>
                     {/* register안에 required는 필수항목, minLength는 최소로 입력되어야 할 문자의 수 */}
