@@ -68,7 +68,7 @@ function Login() {
     // LOGIN_MUTATION에 있는 error가 폼에 나오도록 하기 위한 hooks 사전작업
     // loading은 mutation이 잘 전송되었는지 확인하고, data는 mutation 종료 이후에 data가 있는지 확인하고, called는 mutation이 호출된건지 여부를 확인할 수 있다.
     // onCompleted는 49번째줄에 명시해놨지만 mutation이 발생하는지 끝났는지 확인해주는 작업이다.
-    const [ login, { loading, data, called } ] = useMutation(LOGIN_MUTATION, { onCompleted });
+    const [ login, { loading } ] = useMutation(LOGIN_MUTATION, { onCompleted });
 
     // onSubmitValid는 form에 있는 input을 검사해줌
     const onSubmitValid = (data) => {
