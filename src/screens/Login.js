@@ -8,14 +8,14 @@ import BottomBox from "../components/auth/BottomBox";
 import Separator from "../components/auth/Separator";
 import AuthLayout from "../components/auth/AuthLayout";
 import login_logo from "../images/logos/login_logo.png";
+import { logUserIn } from "../apollo";
+import { useForm } from "react-hook-form";
+import { useLocation } from "react-router";
 import { gql, useMutation } from "@apollo/client";
+import FormError from "../components/auth/FormError";
 import { ImageBox } from "../components/auth/ImageBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookSquare } from "@fortawesome/free-brands-svg-icons";
-import { useForm } from "react-hook-form";
-import FormError from "../components/auth/FormError";
-import { logUserIn } from "../apollo";
-import { useLocation } from "react-router";
 
 const FacebookLogin = styled.div`
     color: #385285;
