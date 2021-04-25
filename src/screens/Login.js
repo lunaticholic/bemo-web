@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookSquare } from "@fortawesome/free-brands-svg-icons";
 import { useForm } from "react-hook-form";
 import FormError from "../components/auth/FormError";
+import { logUserIn } from "../apollo";
 
 const FacebookLogin = styled.div`
     color: #385285;
@@ -42,7 +43,7 @@ function Login() {
     // formState는 폼에서 일어날 수 있는 것들에 대해 반응한다
     // onBlur는 어떠한 항목을 벗어났을때만 입력된 값이 유효한지 확인한다는 의미
     // onChange는 어떠한 항목이 변경될 때마다 입력된 값이 유효한지 확인한다는 의미
-    const { register, handleSubmit, errors, formState, getValues, setError } = useForm({
+    const { register, handleSubmit, errors, formState, getValues, setError, clearErrors } = useForm({
         mode: "onChange"
     })
     
@@ -53,10 +54,14 @@ function Login() {
         const {login: {ok, token, error}} = data;
         // 위의 구문에서 로그인에 성공하면 ok를 반환하는데, 만약 실패할경우 에러메세지를 반환하라는 if문이다.
         if(!ok) {
-            setError("result", {
+            return setError("result", {
                 // 이런식으로 표기를 해줘야 BackEnd에서 많은 양의 error를 보내는 대신에 어떤식으로 error를 보이게 할지 컨트롤 할 수 있다.
                 message: error,
             })
+        }
+        // 토큰을 저장하는 가장 간단한 방법, 그래야 로그인이 되고 홈화면으로 넘어가니까 
+        if (token) {
+            logUserIn(token)
         }
     }
 
@@ -79,6 +84,8 @@ function Login() {
             }
         })
     }
+
+    const clearLoginError = () => { clearErrors("result") };
     
     return (
         <AuthLayout>
@@ -94,12 +101,13 @@ function Login() {
                 <form onSubmit={handleSubmit( onSubmitValid )}>
                     {/* register안에 required는 필수항목, minLength는 최소로 입력되어야 할 문자의 수 */}
                     {/* ref안에는 validate를 사용하여 필수로 추가되어야 하는 것도 검사 가능하고, pattern을 통해 입력 형식을 검사할 수 있다. 개쩌네 */}
-                    <Input ref={register({ required: "email은 필수항목입니다.", minLength: 5 })} name="email" type="text"placeholder="EMAIL" hasError={Boolean(errors?.email?.message)} />
+                    {/* onChange안에는 error가 발생하고 난 후 다시 뭔가 변경을 시도하면 에러를 없애주는 구문이다. */}
+                    <Input ref={register({ required: "email은 필수항목입니다.", minLength: 5 })} onChange={clearLoginError} name="email" type="text"placeholder="EMAIL" hasError={Boolean(errors?.email?.message)} />
                     
                     {/* email 채워져 있지 않은 경우 아래 항목을 통해 email required가 메세지로 보일 것이다. */}
                     <FormError message={errors?.email?.message} />
                     
-                    <Input ref={register({ required: "password는 필수항목입니다.", minLength: { value: 5, message: "password는 최소 5글자 이상입니다."} })} name="password" type="password" placeholder="PASSWORD" hasError={Boolean(errors?.password?.message)} />
+                    <Input ref={register({ required: "password는 필수항목입니다.", minLength: { value: 5, message: "password는 최소 5글자 이상입니다."} })} onChange={clearLoginError} name="password" type="password" placeholder="PASSWORD" hasError={Boolean(errors?.password?.message)} />
                     {/* password항목이 채워져 있지 않은 경우 아래 항목을 통해 password required가 메세지로 보일 것이다. */}
                     <FormError message={errors?.password?.message} />
                     
@@ -108,6 +116,7 @@ function Login() {
                     <FormError message={errors?.result?.message} />
                 </form>
             <Separator />
+            {/* oAuth 중 하나인 페이스북을 통한 로그인을 진행하는 구문 */}
             <FacebookLogin>
                 <FontAwesomeIcon icon={faFacebookSquare} />
                 <span>LOG IN WITH FACEBOOK</span>

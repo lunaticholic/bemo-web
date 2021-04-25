@@ -1,6 +1,20 @@
 import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
 
-export const isLoggedInVar = makeVar(false);
+const TOKEN = "token";
+
+// Boolean값을 통해 로그인이 되었다면 브라우저는 이를 기억하도록 하는 장치임
+export const isLoggedInVar = makeVar(Boolean(localStorage.getItem(TOKEN)));
+export const logUserIn = (token) => {
+    // 발급받은 토큰을 저장하는 방법
+    localStorage.setItem(TOKEN, token)
+    isLoggedInVar(true);
+}
+export const logUserOut = (token) => {
+    // 발급받은 토큰을 삭제하는 방법
+    localStorage.removeItem(TOKEN, token)
+    isLoggedInVar(false);
+}
+
 export const darkModeVar = makeVar(false);
 
 export const client = new ApolloClient({
