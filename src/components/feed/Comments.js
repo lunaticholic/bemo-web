@@ -52,6 +52,25 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
             }
             // console.log(newComment)
 
+            // Comment를 작성할 때 위조한 newComment를 data로 보내고 fragment를 graphql형태로 나타내야됨
+            // 그래야 comment를 수정하거나 삭제할 수 있음
+            const newCacheComment = cache.writeFragment({
+                data: newComment,
+                fragment: gql`
+                    fragment BSName on Comment {
+                        id
+                        createdAt
+                        isMine
+                        payload
+                        user {
+                            username
+                            avatar
+                        }
+                    }
+                `
+            })
+            // console.log(newCacheComment)
+
             // comment에 대한 cache를 수정하는 작업임
             cache.modify({
                 // 우리가 수정하고 싶은 photo의 id
@@ -61,7 +80,7 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
                     // 이전의 comments를 수정할거임
                     comments(prev) {
                         // 이전에 있단 comment와 새로운 comment를 붙여서 새 array를 만들고 return 할거임
-                        return [...prev, newComment];
+                        return [...prev, newCacheComment];
                     },
                     // comment가 작성되고 난 이후에 화면에 조그만한 글씨로 몇개의 comment가 있는지 알려주는 녀석
                     // 하나가 작성될 때마다 카운트가 1개씩 증가한다.
