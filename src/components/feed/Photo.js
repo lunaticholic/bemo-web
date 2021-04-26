@@ -113,7 +113,8 @@ function Photo({ id, user, file, isLiked, likes, caption, commentNumber, comment
                 </PhotoActions>
                 <Likes>{likes === 1 ? "1 Like" : `${likes} Likes`}</Likes>
                 {/* components 폴더의 Comments에서 전달받아서 출력 각각의 반환값은 Comment페이지에서 보여줄 값들 */}
-                <Comments 
+                <Comments
+                    photoId={id}
                     author={user.username}
                     caption={caption}
                     commentNumber={commentNumber}
