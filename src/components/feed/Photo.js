@@ -69,14 +69,27 @@ function Photo({ id, user, file, isLiked, likes }) {
         // 이렇게 작성하면 cache에 직접적으로 write할 수 있지요
         // 이렇게 하면? heart를 클릭했을 때 빨간색으로 나오고, 빨간색이면 반대로 나옴
         if (ok) {
-            cache.writeFragment({
-                id: `Photo:${id}`,
-                // fragment는 데이터의 일부분, 작은 크기의 데이터임
-                // BSName은 닉네임이니까 원하는 이름 적어주고 on 뒤에는 type을 적어줘야 된다. 여기서는 Photo를 수정할꺼니까 Photo가 타입이네
-                fragment: gql` fragment BSName on Photo { isLiked } `,
-                // data에는 우리가 cache에 어떤 걸 write할지 쓰면 된단다
-                data: { isLiked: !isLiked }
+            const fragmentId = `Photo:${id}`;
+            const fragment = gql` fragment BSName on Photo { 
+                isLiked
+                likes
+            }`
+            const result = cache.readFragment({
+                id: fragmentId,
+                fragment: fragment,
             })
+            if ("isLiked" in result && "likes" in result) {
+                const { isLiked: cacheIsLiked, likes: cacheLikes } = result;
+                cache.writeFragment({
+                    id: fragmentId,
+                    // fragment는 데이터의 일부분, 작은 크기의 데이터임
+                    // BSName은 닉네임이니까 원하는 이름 적어주고 on 뒤에는 type을 적어줘야 된다. 여기서는 Photo를 수정할꺼니까 Photo가 타입이네
+                    fragment: fragment,
+                    // data에는 우리가 cache에 어떤 걸 write할지 쓰면 된단다
+                    // likes는 말 그대로임, 좋아요 버튼 눌러서 heart가 빨간색으로 바뀌면 숫자도 바뀔거임
+                    data: { isLiked: !cacheIsLiked, likes: cacheIsLiked ? cacheLikes - 1 : cacheLikes + 1 }
+                })
+            }
         }
     }
     // 좋아요버튼의 기능을 구현하기 위한 mutation
