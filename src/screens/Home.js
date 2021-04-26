@@ -3,7 +3,7 @@
 import { gql, useQuery } from "@apollo/client";
 import Photo from "../components/feed/Photo";
 import PageTitle from "../components/PageTitle";
-import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from "../components/fragments";
+import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from "../fragments";
 
 //작성되어 있는 글들을 보여주려고 데이터를 가져오는 쿼리문
 export const FEED_QUERY = gql`
@@ -35,7 +35,9 @@ function Home() {
         <div align="center">
             <PageTitle title="Home" />
             {/* Photo페이지에서 페이지를 불러오며, 이 때 데이터는 ...photo로 표시해주는데 Photo페이지에 propTypes로 지정하여 불러왔다. */}
-            {data?.seeFeed?.map((photo) => <Photo key={photo.id} {...photo} /> )}
+            {data?.seeFeed?.map((photo) => (
+                <Photo key={photo.id} {...photo} />
+            ))}
             {/* <button onClick={() => logUserOut(history)}>Log Out Now!</button> */}
         </div>
     );

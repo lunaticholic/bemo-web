@@ -1,11 +1,10 @@
 import { useParams } from "react-router";
 import { gql, useQuery } from "@apollo/client";
-import { PHOTO_FRAGMENT } from "../components/fragments";
+import { PHOTO_FRAGMENT } from "../fragments";
 
 const SEE_PROFILE_QUERY = gql`
     query seeProfile($username: String!) {
         seeProfile(username: $username) {
-            id
             username
             bio
             avatar

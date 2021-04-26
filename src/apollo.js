@@ -50,7 +50,16 @@ const authLink = setContext((_, { headers }) => {
 // authLink랑 httpLink랑 두 개의 링크를 연결해줌
 export const client = new ApolloClient({
     link: authLink.concat(httpLink),
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+        typePolicies: {
+            // 우리가 변경하고자 하는 타입의 이름을 적어주면 됨
+            User: {
+                // 이 함수를 쓰면 정확히 어떤 필드를 고유 식별자로 설정할건지 알려줄 수 있다.
+                // 현재 profile에 보면 id가 없기때문에 username을 고유식별자로 설정하면 됨
+                keyFields: (obj) => `User:${obj.username}`,
+            }
+        }
+    }),
 });
 
 /*
