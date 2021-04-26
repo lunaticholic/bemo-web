@@ -1,13 +1,14 @@
+import React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-import sanitizeHtml from "sanitize-html";
 import { FatText } from "../shared";
 
 const CommentContainer = styled.div`
 `;
 const CommentCaption = styled.span`
     margin-left: 20px;
-    mark {
+    a {
         background-color: inherit;
         color: ${(props) => props.theme.accent};
         cursor: pointer;
@@ -16,22 +17,24 @@ const CommentCaption = styled.span`
 `;
 
 function Comment({ author, payload }) {
-    // 밑의 dangerouslySetInnerHTML의 위험성을 줄이기위해 아래와 같이 sanitizeHtml 메소드를 사용하여 보호해준다.
-    // user를 너무 밑지 마 ㅋㅋ
-    const cleanPayload = sanitizeHtml(
-            payload.replace(/#[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|\w]+/g, "<mark>$&</mark>"), 
-            {
-                allowedTags: ["mark"]
-            }
-        )
     return (
         <CommentContainer>
             <FatText>{author}</FatText>
-            {/* 이 props는 텍스트가 아니라 html로 해석될 수 있도록 만들어주지롱 */}
-            {/* 하지만 이건 너무 위험하지롱, 모든 걸 HTML로 만들어버려서  */}
-            <CommentCaption dangerouslySetInnerHTML={
-                { __html: cleanPayload }
-            } />
+            <CommentCaption>
+                {/* 정규 표현식을 사용하여서 hashtag로 되어있는 단어들을 링크로 연결하여 관련 hashtag를 가진 사진들을 보여줄거임 */}
+                {/* 이렇게 하면 map이 등록되어 있는 글을 배열로 만들건데 이렇게만 하면 'kep' prop을 만들라고 발생함 */}
+                {payload.split(" ").map((word, index) => 
+                    /#[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|\w]+/g.test(word) ? (
+                        <React.Fragment key={index}>
+                            <Link to={`/hashtags/${word}`}>{word}</Link>{" "}
+                        </React.Fragment>
+                    )  : (
+                        <React.Fragment key={index}>
+                            {word}{" "}
+                        </React.Fragment>
+                    )
+                )}
+            </CommentCaption>
         </CommentContainer>
     )
 }
