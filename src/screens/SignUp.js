@@ -48,7 +48,7 @@ function SignUp() {
     // onCompleted는 우리에게 data를 보내주는데, 이 data는 바로 useMutation에서 오는 data이다.
     const onCompleted = (data) => {
         const { email } = getValues();
-        const { createAccount: {ok, error } } = data;
+        const { createAccount: { ok } } = data;
         if (!ok) { return; }
         // history API에 접근해서 홈화면으로 돌려주는 작업
         history.push(routes.home, {message: "계정이 생성되었습니다. 로그인해주세요.", email});
@@ -59,7 +59,7 @@ function SignUp() {
     const [ createAccount, { loading } ] = useMutation(CREATE_ACCOUNT_MUTATION, {
         onCompleted
     });
-    const { register, formState, handleSubmit, errors, getValues } = useForm({ mode: "onChange" });
+    const { register, formState, handleSubmit, getValues } = useForm({ mode: "onChange" });
     
     // onSubmitValid는 form에 있는 input을 검사해줌
     const onSubmitValid = (data) => {
