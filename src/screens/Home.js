@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Avatar from "../components/Avatar";
 import { FatText } from "../components/shared";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart as SolidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faBookmark, faComment, faHeart, faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 
 //작성되어 있는 글들을 보여주려고 데이터를 가져오는 쿼리문
@@ -22,6 +23,7 @@ const FEED_QUERY = gql`
                 comments
                 createdAt
                 isMine
+                isLiked
             }
         }
 `;
@@ -43,7 +45,7 @@ const Username = styled(FatText)`
 `;
 
 const PhotoFile = styled.img`
-    min-width: 100%;
+    max-width: 100%;
 `;
 const PhotoData = styled.div`
     padding: 15px;
@@ -56,6 +58,9 @@ const PhotoActions = styled.div`
         display: flex;
         align-items: center;
     }
+    svg {
+        font-size: 20px;
+    }
 `;
 const PhotoAction = styled.div`
     margin-right: 10px;
@@ -64,6 +69,7 @@ const PhotoAction = styled.div`
 const Likes = styled(FatText)`
     margin-top: 10px;
     display: block;
+    text-align: left;
 `;
 
 // 홈화면에 아이디 값이 나타날 때 history로 apollo.js와 연결하면 없애줄수 있다.
@@ -71,7 +77,7 @@ function Home() {
     const { data } = useQuery(FEED_QUERY);
     const history = useHistory();
     return (
-        <div>
+        <div align="center">
             {data?.seeFeed?.map((photo) => (
                 <PhotoContainer key={photo.id}>
                     <PhotoHeader>
@@ -82,9 +88,9 @@ function Home() {
                     <PhotoData>
                         <PhotoActions>
                             <div>
-                            <PhotoAction><FontAwesomeIcon size={"lg"} icon={faHeart} /></PhotoAction>
-                            <PhotoAction><FontAwesomeIcon size={"lg"} icon={faComment} /></PhotoAction>
-                            <PhotoAction><FontAwesomeIcon size={"lg"} icon={faPaperPlane} /></PhotoAction>
+                            <PhotoAction><FontAwesomeIcon style={{color: photo.isLiked ? "tomato" : "inherit"}} icon={photo.isLiked ? SolidHeart : faHeart} /></PhotoAction>
+                            <PhotoAction><FontAwesomeIcon icon={faComment} /></PhotoAction>
+                            <PhotoAction><FontAwesomeIcon icon={faPaperPlane} /></PhotoAction>
                             </div>
                             <div>
                                 <FontAwesomeIcon size={"lg"} icon={faBookmark} />
