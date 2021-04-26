@@ -55,7 +55,7 @@ function Header() {
         <SHeader>
             <Wrapper>
                 <ImageBox>
-                    <div>
+                    <div path={routes.home}>
                         <img src={home_logo} width="60%" height="60%" alt="login_logo" />
                     </div>
                 </ImageBox>
