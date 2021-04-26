@@ -1,13 +1,13 @@
 import Avatar from "../Avatar";
+import Comments from "./Comments";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { FatText } from "../shared";
+import { Link } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as SolidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faBookmark, faComment, faHeart, faPaperPlane } from "@fortawesome/free-regular-svg-icons";
-import Comments from "./Comments";
-import { Link } from "react-router-dom";
 
 const TOGGLE_LIKE_MUTATION = gql`
     mutation toggleLike($id: Int!) {
