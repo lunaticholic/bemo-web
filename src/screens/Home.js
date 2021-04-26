@@ -4,7 +4,7 @@ import { gql, useQuery } from "@apollo/client";
 import Photo from "../components/feed/Photo";
 
 //작성되어 있는 글들을 보여주려고 데이터를 가져오는 쿼리문
-const FEED_QUERY = gql`
+export const FEED_QUERY = gql`
         query seeFeed {
             seeFeed {
                 id

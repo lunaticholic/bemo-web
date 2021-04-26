@@ -2,6 +2,7 @@ import Avatar from "../Avatar";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { FatText } from "../shared";
+import { FEED_QUERY } from "../../screens/Home"
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as SolidHeart } from "@fortawesome/free-solid-svg-icons";
@@ -63,7 +64,8 @@ const Likes = styled(FatText)`
 
 function Photo({ id, user, file, isLiked, likes }) {
     // 좋아요버튼의 기능을 구현하기 위한 mutation
-    const [ toggleLikeMutation, { loading } ] = useMutation(TOGGLE_LIKE_MUTATION, { variables: { id } });
+    // refetchQueries는 query를 다시 호출하는 기능, 그러니까 좋아요 버튼을 눌렀다면 눌렀다고 바로바로 알려줄 수 있는 기능
+    const [ toggleLikeMutation, { loading } ] = useMutation(TOGGLE_LIKE_MUTATION, { variables: { id }, refetchQueries: [{ query: FEED_QUERY }] });
 
     return (
         <PhotoContainer key={id}>
@@ -75,6 +77,7 @@ function Photo({ id, user, file, isLiked, likes }) {
             <PhotoData>
                 <PhotoActions>
                     <div>
+                        {/* 좋아요 버튼을 눌러야되니 버튼처럼 보이게 해준다 */}
                         <PhotoAction onClick={toggleLikeMutation}><FontAwesomeIcon style={{color: isLiked ? "tomato" : "inherit"}} icon={isLiked ? SolidHeart : faHeart} /></PhotoAction>
                         <PhotoAction><FontAwesomeIcon icon={faComment} /></PhotoAction>
                         <PhotoAction><FontAwesomeIcon icon={faPaperPlane} /></PhotoAction>
