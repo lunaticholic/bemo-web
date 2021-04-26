@@ -6,6 +6,7 @@ import { gql, useMutation } from "@apollo/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as SolidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faBookmark, faComment, faHeart, faPaperPlane } from "@fortawesome/free-regular-svg-icons";
+import Comments from "./Comments";
 
 const TOGGLE_LIKE_MUTATION = gql`
     mutation toggleLike($id: Int!) {
@@ -61,7 +62,7 @@ const Likes = styled(FatText)`
     text-align: left;
 `;
 
-function Photo({ id, user, file, isLiked, likes }) {
+function Photo({ id, user, file, isLiked, likes, caption, commentNumber, comments }) {
     // like버튼이 업데이트가 이루어지면 cache에 반환하여 실시간 업데이트를 이루어지게 하는 방법
     const updateToggleLike = (cache, result) => {
         const { data: { toggleLike: { ok }}} = result;
@@ -116,6 +117,13 @@ function Photo({ id, user, file, isLiked, likes }) {
                     </div>
                 </PhotoActions>
                 <Likes>{likes === 1 ? "1 Like" : `${likes} Likes`}</Likes>
+                {/* components 폴더의 Comments에서 전달받아서 출력 각각의 반환값은 Comment페이지에서 보여줄 값들 */}
+                <Comments 
+                    author={user.username}
+                    caption={caption}
+                    commentNumber={commentNumber}
+                    comments={comments}
+                />
             </PhotoData>
         </PhotoContainer>
     )
@@ -127,9 +135,11 @@ Photo.propTypes = {
         avatar: PropTypes.string,
         username: PropTypes.string.isRequired
     }),
+    caption: PropTypes.string.isRequired,
     file: PropTypes.string.isRequired,
     isLiked: PropTypes.bool.isRequired,
-    likes: PropTypes.number.isRequired
-}
+    likes: PropTypes.number.isRequired,
+    
+};
 
 export default Photo;
