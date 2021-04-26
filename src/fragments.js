@@ -17,8 +17,8 @@ export const COMMENT_FRAGMENT = gql`
     fragment CommentFragment on Comment {
         id
         user {
-        username
-        avatar
+            username
+            avatar
         }
         payload
         isMine

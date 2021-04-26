@@ -55,9 +55,9 @@ function Header() {
         <SHeader>
             <Wrapper>
                 <ImageBox>
-                    <div path={routes.home}>
+                    <Link to={routes.home}>
                         <img src={home_logo} width="60%" height="60%" alt="login_logo" />
-                    </div>
+                    </Link>
                 </ImageBox>
                 <Column>
                 {/* 마찬가지로 로그인이 되어 있다면 이 화면이 보일 것이고 아래의 아이콘 대신에 로그인버튼이 보일 것이다. */}
