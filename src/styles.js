@@ -28,6 +28,7 @@ export const GlobalStyles = createGlobalStyle`
         color: ${(props) => props.theme.fontColor};
     }
     a {
+        color: inherit;
         text-decoration: none;
     }
 `;

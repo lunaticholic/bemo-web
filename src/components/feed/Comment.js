@@ -60,7 +60,10 @@ function Comment({ id, photoId, isMine, author, payload }) {
     };
     return (
         <CommentContainer>
-            <FatText>{author}</FatText>
+            {/* 이 링크는 사용자의 username을 클릭했을때 Profile 페이지로 넘어가기 위해서 */}
+            <Link to={`/users/${author}`}>
+                <FatText>{author}</FatText>
+            </Link>
             <CommentCaption>
                 {/* 정규 표현식을 사용하여서 hashtag로 되어있는 단어들을 링크로 연결하여 관련 hashtag를 가진 사진들을 보여줄거임 */}
                 {/* 이렇게 하면 map이 등록되어 있는 글을 배열로 만들건데 이렇게만 하면 'kep' prop을 만들라고 발생함 */}

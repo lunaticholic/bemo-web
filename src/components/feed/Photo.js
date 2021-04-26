@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as SolidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faBookmark, faComment, faHeart, faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import Comments from "./Comments";
+import { Link } from "react-router-dom";
 
 const TOGGLE_LIKE_MUTATION = gql`
     mutation toggleLike($id: Int!) {
@@ -95,8 +96,14 @@ function Photo({ id, user, file, isLiked, likes, caption, commentNumber, comment
     return (
         <PhotoContainer key={id}>
             <PhotoHeader>
-                <Avatar lg url={user.avatar} />
-                <Username>{user.username}</Username>
+                {/* 이 링크는 사용자의 username을 클릭했을때 Profile 페이지로 넘어가기 위해서 */}
+                <Link to={`/users/${user.username}`}>
+                    <Avatar lg url={user.avatar} />
+                </Link>
+                {/* 이 링크는 사용자의 username을 클릭했을때 Profile 페이지로 넘어가기 위해서 */}
+                <Link to={`/users/${user.username}`}>
+                    <Username>{user.username}</Username>
+                </Link>
             </PhotoHeader>
             <PhotoFile src={file} />
             <PhotoData>
