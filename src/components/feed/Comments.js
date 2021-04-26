@@ -1,9 +1,9 @@
 import Comment from "./Comment";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { gql, useMutation } from "@apollo/client";
-import { useForm } from "react-hook-form";
 import useUser from "../../hooks/useUser";
+import { useForm } from "react-hook-form";
+import { gql, useMutation } from "@apollo/client";
 
 const CommentsContainer = styled.div`
     margin-top: 20px;
@@ -111,7 +111,7 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
             </CommentCount>
             {comments?.map( comment => 
                 // 위의 comment와 비슷한 구조이지만 이건 댓글을 작성한 작성자들의 글을 보여주는 공간이다.
-                <Comment key={comment.id} author={comment.user.username} payload={comment.payload} />
+                <Comment key={comment.id} id={comment.id} photoId={photoId} author={comment.user.username} payload={comment.payload} isMine={comment.isMine} />
             )}
             <div>
                 <form onSubmit={handleSubmit(onValid)}>

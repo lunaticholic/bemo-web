@@ -1,8 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { FatText } from "../shared";
+import { Link } from "react-router-dom";
+import { gql, useMutation } from "@apollo/client";
+
+const DELETE_COMMENT_MUTATION = gql`
+    mutation deleteComment($id: Int!) {
+        deleteComment(id: $id) {
+            ok
+        }
+    }
+`;
 
 const CommentContainer = styled.div`
     margin-bottom: 5px;
@@ -17,7 +26,38 @@ const CommentCaption = styled.span`
     }
 `;
 
-function Comment({ author, payload }) {
+function Comment({ id, photoId, isMine, author, payload }) {
+    // comment를 삭제하면 실시간으로 화면에 반영하기
+    const updateDeleteComment = (cache, result) => {
+        const {
+            data: {
+                deleteComment: { ok },
+            },
+        } = result;
+        if (ok) {
+            // comment를 삭제하고 (cache에서), 실제로도 삭제 되겠지
+            cache.evict({ id: `Comment:${id}` });
+            // 조그만한 글씨의 comments가 삭제될때마다 하나씩 줄어들겠지
+            cache.modify({
+                id: `Photo:${photoId}`,
+                fields: {
+                    commentNumber(prev) {
+                        return prev - 1;
+                    },
+                },
+            });
+        }
+    }
+    // comment를 삭제하기 위한 작업, comment를 삭제할 때 그 comment의 id값을 찾아서 삭제한다.
+    const [deleteCommentMutation] = useMutation(DELETE_COMMENT_MUTATION, {
+        variables: {
+            id,
+        },
+        update: updateDeleteComment,
+    });
+    const onDeleteClick = () => {
+        deleteCommentMutation();
+    };
     return (
         <CommentContainer>
             <FatText>{author}</FatText>
@@ -36,11 +76,15 @@ function Comment({ author, payload }) {
                     )
                 )}
             </CommentCaption>
+            { isMine ? <button onClick={onDeleteClick}>❌</button> : null }
         </CommentContainer>
     )
 }
 
 Comment.propTypes = {
+    isMine: PropTypes.bool,
+    id: PropTypes.number,
+    photoId: PropTypes.number,
     author: PropTypes.string.isRequired,
     payload: PropTypes.string.isRequired
 }
