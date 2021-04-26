@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { FatText } from "../shared";
 
 const CommentContainer = styled.div`
+    margin-bottom: 5px;
 `;
 const CommentCaption = styled.span`
     margin-left: 20px;
