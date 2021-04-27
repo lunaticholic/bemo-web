@@ -68,7 +68,7 @@ function Header() {
                     <Icon>
                         {/* 이 링크는 사용자의 username을 클릭했을때 Profile 페이지로 넘어가기 위해서 */}
                         <Link to={`/users/${data?.me?.username}`}>
-                            <Avatar url={data?.me?.avatar} />
+                        <Avatar url={data?.me?.avatar} />
                         </Link>
                     </Icon>
                     </IconsContainer>

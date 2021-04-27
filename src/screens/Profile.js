@@ -1,24 +1,41 @@
 import { gql, useQuery } from "@apollo/client";
-import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
+import { faComment, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import Button from "../components/auth/Button";
 import { FatText } from "../components/shared";
 import { PHOTO_FRAGMENT } from "../fragments";
+
+const FOLLOW_USER_MUTATION = gql`
+    mutation followUser($username: String!) {
+        followUser(username: $username) {
+        ok
+        }
+    }
+`;
+
+const UNFOLLOW_USER_MUTATION = gql`
+    mutation unfollowUser($username: String!) {
+        unfollowUser(username: $username) {
+        ok
+        }
+    }
+`;
 
 const SEE_PROFILE_QUERY = gql`
     query seeProfile($username: String!) {
         seeProfile(username: $username) {
-            username
-            bio
-            avatar
-            photos {
-                ...PhotoFragment
-            }
-            totalFollowing
-            totalFollowers
-            isMe
-            isFollowing
+        username
+        bio
+        avatar
+        photos {
+            ...PhotoFragment
+        }
+        totalFollowing
+        totalFollowers
+        isMe
+        isFollowing
         }
     }
     ${PHOTO_FRAGMENT}
@@ -43,6 +60,8 @@ const Username = styled.h3`
 const Row = styled.div`
     margin-bottom: 20px;
     font-size: 16px;
+    display: flex;
+    align-items: center;
 `;
 const List = styled.ul`
     display: flex;
@@ -94,35 +113,55 @@ const Icon = styled.span`
     }
 `;
 
+const ProfileBtn = styled(Button).attrs({
+    as: "span",
+})`
+    margin-left: 10px;
+    margin-top: 0px;
+`;
 
 function Profile() {
-    // 주소의 있는 username을 보고 어떻게 정보를 받아올 수 있을까? 답은 react HOOKS!!!!!!
     const { username } = useParams();
     const { data } = useQuery(SEE_PROFILE_QUERY, {
         variables: {
         username,
         },
     });
-    console.log({data});
     
+    const getButton = (seeProfile) => {
+        const { isMe, isFollowing } = seeProfile;
+        if (isMe) {
+            // 사용자 본인의 profile을 볼 경우 edit profile
+            return <ProfileBtn>Edit Profile</ProfileBtn>;
+        }
+        if (isFollowing) {
+            // 다른 사용자의 profile을 보는데 follow중이라면
+            return <ProfileBtn>Unfollow</ProfileBtn>;
+        } else {
+            // 다른 사용자의 profile을 보는데 unfollow중이라면
+            return <ProfileBtn>Follow</ProfileBtn>;
+        }
+    };
+
     return (
         <div>
             <Header>
-            <Avatar src={data?.seeProfile?.avatar} />
-            <Column>
+                <Avatar src={data?.seeProfile?.avatar} />
+                <Column>
                 <Row>
                     <Username>{data?.seeProfile?.username}</Username>
+                    {data?.seeProfile ? getButton(data.seeProfile) : null}
                 </Row>
                 <Row>
                     <List>
                     <Item>
                         <span>
-                        <Value>{data?.seeProfile?.totalFollowers}</Value> followers
+                            <Value>{data?.seeProfile?.totalFollowers}</Value>&nbsp;&nbsp;followers
                         </span>
                     </Item>
                     <Item>
                         <span>
-                        <Value>{data?.seeProfile?.totalFollowing}</Value> following
+                            <Value>{data?.seeProfile?.totalFollowing}</Value>&nbsp;&nbsp;following
                         </span>
                     </Item>
                     </List>
@@ -132,7 +171,7 @@ function Profile() {
             </Header>
             <Grid>
                 {data?.seeProfile?.photos.map((photo) => (
-                <Photo bg={photo.file}>
+                <Photo key={photo.id} bg={photo.file}>
                     <Icons>
                     <Icon>
                         <FontAwesomeIcon icon={faHeart} />
@@ -146,7 +185,7 @@ function Profile() {
                 </Photo>
                 ))}
             </Grid>
-        </div>
+            </div>
     )
 }
 

@@ -6,12 +6,12 @@ import PageTitle from "../components/PageTitle";
 import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from "../fragments";
 
 //작성되어 있는 글들을 보여주려고 데이터를 가져오는 쿼리문
-export const FEED_QUERY = gql`
+// 이렇게 하면 별도로 생성한 fragments 파일 내에 있는 graphql 쿼리를 사용할 수 있음, 대신 밑에서 선언해야됨
+const FEED_QUERY = gql`
     query seeFeed {
         seeFeed {
-            # 이렇게 하면 별도로 생성한 fragments 파일 내에 있는 graphql 쿼리를 사용할 수 있음, 대신 밑에서 선언해야됨
             ...PhotoFragment
-            user { 
+            user {
                 username
                 avatar
             }
