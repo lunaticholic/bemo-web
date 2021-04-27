@@ -3,7 +3,7 @@ import Button from "../components/auth/Button";
 import { PHOTO_FRAGMENT } from "../fragments";
 import { useParams } from "react-router-dom";
 import { FatText } from "../components/shared";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment, faHeart } from "@fortawesome/free-solid-svg-icons";
 import useUser from "../hooks/useUser";
@@ -125,16 +125,53 @@ const ProfileBtn = styled(Button).attrs({
 function Profile() {
     const { username } = useParams();
     const { data: userData } = useUser();
+    const client = useApolloClient();
     const { data } = useQuery(SEE_PROFILE_QUERY, {
         variables: {
         username,
         },
     });
-    
-    // 사용자의 팔로우와 언팔을 하게 해주는 기능임
-    // refetchQueries는 실제로 버튼을 누르게 되면 상대방 profile의 숫자가 바뀐다.
-    const [ unfollowUser ] = useMutation(UNFOLLOW_USER_MUTATION, { variables: { username } });
-    const [ followUser ] = useMutation(FOLLOW_USER_MUTATION, { variables: { username } });
+
+    // 사용자의 언팔을 하게 해주는 기능임
+    const unfollowUserUpdate = (cache, result) => {
+        const { data: { unfollowUser: { ok } } } = result;
+        if (!ok) { return ; }
+        cache.modify({
+            id: `User:${username}`,
+            // fields는 말 그대로 cache에 저장되어 있는 유저의 모든 fields를 담는 객체
+            fields: {
+                // isFollwing은 버튼의 속성을 변신시켜줌
+                isFollowing(prev) { return false; },
+                // totalFollowers는 사용자 profile에 followers의 속성을 변신, 즉 버튼을 누르면 팔로워가 1 감소하겠네, 우울하네
+                totalFollowers(prev) { return prev - 1; }
+            }
+        })
+    };
+    const [ unfollowUser ] = useMutation(UNFOLLOW_USER_MUTATION, { 
+        variables: { username },
+        update: unfollowUserUpdate
+    });
+    // 사용자의 팔로우를 하게 해주는 기능임
+    const followUserCompleted = (data) => {
+        const { followUser: { ok } } = data;
+        if (!ok) { return ; }
+        // 여기서는 data만 전달받지만, cache를 업데이트해야 실제 follow가 진행되므로 cache를 선언
+        const { cache } = client;
+        cache.modify({
+            id: `User:${username}`,
+            // fields는 말 그대로 cache에 저장되어 있는 유저의 모든 fields를 담는 객체
+            fields: {
+                // isFollwing은 버튼의 속성을 변신시켜줌
+                isFollowing(prev) { return true; },
+                // totalFollowers는 사용자 profile에 followers의 속성을 변신, 즉 버튼을 누르면 팔로워가 1 증가하겠네, 좋겠네
+                totalFollowers(prev) { return prev + 1; }
+            }
+        })
+    };
+    const [ followUser ] = useMutation(FOLLOW_USER_MUTATION, { 
+        variables: { username } ,
+        onCompleted: followUserCompleted
+    });
 
     const getButton = (seeProfile) => {
         const { isMe, isFollowing } = seeProfile;
