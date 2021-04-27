@@ -1,11 +1,12 @@
-import { gql, useQuery } from "@apollo/client";
-import { faComment, faHeart } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../components/auth/Button";
-import { FatText } from "../components/shared";
 import { PHOTO_FRAGMENT } from "../fragments";
+import { useParams } from "react-router-dom";
+import { FatText } from "../components/shared";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComment, faHeart } from "@fortawesome/free-solid-svg-icons";
+import useUser from "../hooks/useUser";
 
 const FOLLOW_USER_MUTATION = gql`
     mutation followUser($username: String!) {
@@ -118,16 +119,23 @@ const ProfileBtn = styled(Button).attrs({
 })`
     margin-left: 10px;
     margin-top: 0px;
+    cursor: pointer;
 `;
 
 function Profile() {
     const { username } = useParams();
+    const { data: userData } = useUser();
     const { data } = useQuery(SEE_PROFILE_QUERY, {
         variables: {
         username,
         },
     });
     
+    // 사용자의 팔로우와 언팔을 하게 해주는 기능임
+    // refetchQueries는 실제로 버튼을 누르게 되면 상대방 profile의 숫자가 바뀐다.
+    const [ unfollowUser ] = useMutation(UNFOLLOW_USER_MUTATION, { variables: { username } });
+    const [ followUser ] = useMutation(FOLLOW_USER_MUTATION, { variables: { username } });
+
     const getButton = (seeProfile) => {
         const { isMe, isFollowing } = seeProfile;
         if (isMe) {
@@ -136,10 +144,10 @@ function Profile() {
         }
         if (isFollowing) {
             // 다른 사용자의 profile을 보는데 follow중이라면
-            return <ProfileBtn>Unfollow</ProfileBtn>;
+            return <ProfileBtn onClick={unfollowUser}>Unfollow</ProfileBtn>;
         } else {
             // 다른 사용자의 profile을 보는데 unfollow중이라면
-            return <ProfileBtn>Follow</ProfileBtn>;
+            return <ProfileBtn onClick={followUser}>Follow</ProfileBtn>;
         }
     };
 

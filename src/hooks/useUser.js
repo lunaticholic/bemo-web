@@ -2,12 +2,15 @@ import { gql, useQuery, useReactiveVar } from "@apollo/client";
 import { useEffect } from "react";
 import { isLoggedInVar, logUserOut } from "../apollo";
 
+//totalFollowing과 totalFollowers는 profile페이지에서 불러오고 있다.
 const ME_QUERY = gql`
     query me {
         me {
             id
             username
             avatar
+            totalFollowing
+            totalFollowers
         }
     }
 `;
