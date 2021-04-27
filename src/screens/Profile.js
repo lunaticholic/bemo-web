@@ -146,6 +146,12 @@ function Profile() {
                 totalFollowers(prev) { return prev - 1; }
             }
         })
+        // 이제 totalFollowing차례네
+        const { me } = userData;
+        cache.modify({
+            id: `User:${me.username}`,
+            fields: { totalFollowing(prev) { return prev - 1; } }
+        })
     };
     const [ unfollowUser ] = useMutation(UNFOLLOW_USER_MUTATION, { 
         variables: { username },
@@ -166,6 +172,12 @@ function Profile() {
                 // totalFollowers는 사용자 profile에 followers의 속성을 변신, 즉 버튼을 누르면 팔로워가 1 증가하겠네, 좋겠네
                 totalFollowers(prev) { return prev + 1; }
             }
+        })
+        // 이제 totalFollowing차례네
+        const { me } = userData;
+        cache.modify({
+            id: `User:${me.username}`,
+            fields: { totalFollowing(prev) { return prev + 1; } }
         })
     };
     const [ followUser ] = useMutation(FOLLOW_USER_MUTATION, { 
